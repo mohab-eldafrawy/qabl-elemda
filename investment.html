@@ -127,6 +127,11 @@
   .tag{display:inline-block;background:var(--orange);color:#fff;border-radius:8px;padding:1px 9px;font-size:.75rem;margin-right:6px}
 .sig .by{font-family:'Caveat',cursive;font-size:24px;color:var(--orange,#e8782a);margin-inline-end:4px;display:inline-block;direction:ltr}
   footer .links a{color:inherit;text-decoration:underline;text-decoration-color:#c9bfa5}
+.sig{display:flex!important;justify-content:center;align-items:baseline;gap:7px;width:100%;text-align:center}
+.sig .by{margin:0!important}
+.empty{text-align:center;padding:26px 8px 20px}
+.empty .mid-mascot{width:130px;display:block;margin:0 auto 10px;transform-origin:bottom center;animation:sway 2.6s ease-in-out infinite;filter:drop-shadow(2px 3px 0 rgba(31,59,99,.15))}
+.empty p{font-family:'Lalezar',cursive;font-size:22px;color:var(--navy)}
 </style>
 </head>
 <body>
@@ -139,7 +144,20 @@
     <div class="psub">محلات وأستوديوهات وإدارية، مع العائد المتوقع للإيجار.</div>
   </header>
   <div class="card" style="padding-top:8px">
-    <div class="sample-note">دي وحدات تجريبية للتوضيح بس، القايمة الحقيقية جاية قريب.</div>
+    <div class="empty"><svg class="mid-mascot" viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="#1f3b63" stroke-width="3" stroke-linecap="round">
+    <path d="M30 148 C30 120 45 110 60 110 C75 110 90 120 90 148"/>
+    <ellipse cx="60" cy="72" rx="34" ry="42"/>
+    <path d="M28 66 C22 30 40 14 60 14 C82 14 98 32 92 64 C90 50 84 40 74 38 C78 46 78 52 76 56 C70 42 56 36 44 42 C34 47 30 56 28 66 Z" fill="#1f3b63" stroke="none" opacity=".92"/>
+    <rect x="33" y="66" width="24" height="17" rx="7"/>
+    <rect x="63" y="66" width="24" height="17" rx="7"/>
+    <path d="M57 74 h6"/>
+    <circle cx="45" cy="74" r="2.6" fill="#1f3b63" stroke="none"/>
+    <circle cx="75" cy="74" r="2.6" fill="#1f3b63" stroke="none"/>
+    <path d="M56 88 c2 3 6 3 8 0"/>
+    <path d="M42 97 C48 93 55 93 60 96 C65 93 72 93 78 97 C74 103 66 104 60 101 C54 104 46 103 42 97 Z" fill="#1f3b63" stroke="none" opacity=".92"/>
+  </g>
+</svg><p>بنجمع لكم أفضل الفرص</p></div>
     <div id="units"></div>
   </div>
   <footer>
@@ -148,7 +166,7 @@
   </footer>
 </div>
 <script>
-var UNITS = [{"name": "استوديو ٤٥م²، العاصمة الإدارية", "loc": "فندقي | إيجار متوقع 22,000 ج شهري", "area": 45, "price": 3200000, "over": 0, "paid": 0, "down": 20, "n": 48, "m": 1, "extra": "عائد إيجار متوقع حوالي 8% سنوي"}, {"name": "محل ٦٠م²، ٦ أكتوبر", "loc": "تجاري | إيجار متوقع 45,000 ج شهري", "area": 60, "price": 6800000, "over": 0, "paid": 0, "down": 25, "n": 36, "m": 3, "extra": "عائد إيجار متوقع حوالي 8% سنوي"}, {"name": "مكتب إداري ٨٠م²، التجمع", "loc": "إداري | إيجار متوقع 38,000 ج شهري", "area": 80, "price": 5400000, "over": 0, "paid": 0, "down": 20, "n": 40, "m": 3, "extra": "عائد إيجار متوقع حوالي 8% سنوي"}];
+var UNITS = [];
 
 var LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxZazefSknItf4HTo24BQEJUGCaG6cr_rH9Km9hiRv3U4EmeeVmCDvtp2_JQLk4ukn0/exec";
 var WHATSAPP_NUMBER = "201035296292";
