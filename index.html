@@ -127,9 +127,9 @@
   <!-- البوابة -->
   <div class="card" id="gate">
     <label style="margin-top:0">اسمك</label>
-    <input type="text" id="leadName" placeholder="اكتب اسمك">
+    <input type="text" id="leadName" name="name" autocomplete="name" autocapitalize="words" placeholder="اكتب اسمك">
     <label>رقم الموبايل</label>
-    <input type="tel" id="leadPhone" inputmode="tel" placeholder="01xxxxxxxxx">
+    <input type="tel" id="leadPhone" name="tel" autocomplete="tel" inputmode="tel" placeholder="01xxxxxxxxx">
     <label>بتفكر تشتري إمتى؟</label>
     <div class="intent" data-v="🔥 بيشتري دلوقتي ومحتاج مساعدة"><span class="dot"></span>بشتري دلوقتي ومحتاج مساعدة<span class="fire">🔥</span></div>
     <div class="intent" data-v="بيفكر يشتري خلال ٦ شهور"><span class="dot"></span>بفكر أشتري في خلال ٦ شهور</div>
@@ -175,7 +175,7 @@
       <tr><td>الأقساط بفلوس النهاردة</td><td id="rInstPV"></td></tr>
       <tr><td>الفرق اللي بيتحسب عليك</td><td id="rDiff"></td></tr>
     </table>
-    <div class="tiny">حسبة تقريبية للتوعية مش وعد — بنحسب بـ 15% في السنة، وده متوسط معقول للتضخم المتوقع في السنين الجاية: قراءة أكتوبر 2026 كانت 12.7%، والبنك المركزي متوقع 15-17% السنة المالية دي تنزل لحوالي 8% اللي بعدها، وهدفه 7% بنهاية 2027.</div>
+    <div class="tiny">حسبة تقريبية للتوعية مش وعد، بنحسب بـ 15% في السنة، وده متوسط معقول للتضخم المتوقع في السنين الجاية: قراءة أكتوبر 2026 كانت 12.7%، والبنك المركزي متوقع 15-17% السنة المالية دي تنزل لحوالي 8% اللي بعدها، وهدفه 7% بنهاية 2027.</div>
     <button class="btn" style="margin-top:12px" onclick="showCalc2()">لو معاك فلوسها كاش، ممكن تجيبها ببلاش ولا لأ؟</button>
   </div>
   </div>
@@ -211,38 +211,37 @@
   </div>
 
   <div class="card" id="cashResult" style="display:none">
+    <div class="tiny" id="iVerdict" style="font-weight:700;font-size:15px;line-height:1.9;margin-bottom:8px"></div>
+    <table class="bd">
+      <tr><td>الكاش اللي معاك</td><td id="iCash"></td></tr>
+      <tr><td>المقدم (بتدفعه من الكاش)</td><td id="iDown"></td></tr>
+      <tr><td>الباقي اللي بيتستثمر</td><td id="iInvest"></td></tr>
+      <tr><td>القسط</td><td id="iInst"></td></tr>
+      <tr><td>قسط السنة</td><td id="iAnnual"></td></tr>
+      <tr><td>إجمالي الأقساط على الورق</td><td id="iTotal"></td></tr>
+    </table>
     <div class="big">
       <div class="val" id="iBig">0</div>
       <div class="lbl" id="iBigLbl"></div>
     </div>
-    <table class="bd">
-      <tr><td>المقدم (بتدفعه من الكاش)</td><td id="iDown"></td></tr>
-      <tr><td>الباقي اللي بيتستثمر</td><td id="iInvest"></td></tr>
-      <tr><td>القسط</td><td id="iInst"></td></tr>
-      <tr><td>إجمالي الأقساط على الورق</td><td id="iTotal"></td></tr>
-      <tr><td>الاستثمار بيغطي الأقساط لحد آخر الخطة؟</td><td id="iCover"></td></tr>
-    </table>
-    <div class="tiny" id="iVerdict" style="font-weight:700"></div>
-    <div class="tiny">بنفترض إن فلوسك متستثمرة بعائد 20% في السنة — في حدود عوائد الشهادات البنكية الحالية — والعائد بيتراكم مع كل فترة قسط. أرقام تقريبية للتوضيح مش وعد، والقرار في الآخر قرارك.</div>
+    <div class="tiny" id="iCoverLine" style="font-weight:700;text-align:center;margin-top:2px"></div>
+    <div style="text-align:center;margin-top:14px;border-top:1px dashed #d8cfb8;padding-top:14px">
+      <div class="tiny" style="font-weight:700;margin-bottom:8px">لو عايز تعرف الحسبة سنة بسنة وعاملة إزاي بالظبط 👇</div>
+      <button class="btn btn-wa" onclick="sendCalcWA()">دوس هنا وهنبعتلك الإكسيل على الواتساب 📊</button>
+    </div>
   </div>
   </div>
 
   <div class="card" id="unitsCard">
     <h2>وحدات تقدر تتفرج عليها 🏠</h2>
-    <p class="sub">اختار أي وحدة واضغط «احسبها» — هتشوف قيمتها الحقيقية بفلوس النهاردة على طول.</p>
-    <div class="sample-note">دي وحدات تجريبية للتوضيح بس — قايمة الوحدات الحقيقية جاية قريب.</div>
+    <p class="sub">اختار أي وحدة واضغط «احسبها»، هتشوف قيمتها الحقيقية بفلوس النهاردة على طول.</p>
+    <div class="sample-note">دي وحدات تجريبية للتوضيح بس، قايمة الوحدات الحقيقية جاية قريب.</div>
     <h3 style="color:var(--navy);margin:14px 0 0">وحدات متاحة</h3>
     <div id="unitsAvail"></div>
     <h3 style="color:var(--navy);margin:18px 0 0">وحدات استثمارية</h3>
     <div id="unitsInvest"></div>
   </div>
 
-  <div class="card guide-card">
-    <h2>وإزاي تختبر المطوّر قبل ما تدفع؟</h2>
-    <p>«٣ حاجات لازم تتأكد منها في العقد» — جايد مجاني يوصلك واتساب على طول.</p>
-    <button class="btn btn-wa" onclick="sendGuide()">ابعتولي الجايد</button>
-    <div id="leadMsg">تمام يا بطل! طلبك وصل — هيوصلك الجايد واتساب على رقمك.</div>
-  </div>
   </div>
 
   <footer>
@@ -269,6 +268,14 @@
 
 <script>
 var LEADS_ENDPOINT = "https://script.google.com/macros/s/AKfycbxZazefSknItf4HTo24BQEJUGCaG6cr_rH9Km9hiRv3U4EmeeVmCDvtp2_JQLk4ukn0/exec";
+var WHATSAPP_NUMBER = "201035296292";
+function sendCalcWA(){
+  var C = num('cCashAmt'), P = num('cPrice'), dpp = num('cDown'), n = num('cN');
+  var per = document.getElementById('cPeriod');
+  var perTxt = per.options[per.selectedIndex].text;
+  var msg = "أهلاً مهاب، أنا استخدمت حاسبة «قبل الإمضا» وعايز شيت الإكسل بحسابتي.\nالكاش اللي معايا: " + fmt(C) + " ج\nسعر الوحدة: " + fmt(P) + " ج\nالمقدم: " + dpp + "%\nعدد الأقساط: " + n + " (قسط كل " + perTxt + ")";
+  window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg), "_blank");
+}
 
 var chosenIntent = "";
 document.querySelectorAll('.intent').forEach(function(el){
@@ -280,35 +287,51 @@ document.querySelectorAll('.intent').forEach(function(el){
 });
 
 function normPhone(p){
-  p = (p||"").replace(/\D/g,'');
-  if(p.indexOf("00")===0){ p = p.substring(2); }
-  if(p.indexOf("01")===0 && p.length===11){ p = "2"+p; }
-  return p;
+  p = (p||"").replace(/[٠-٩۰-۹]/g, function(d){ var i = "٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹".indexOf(d); return (i%10)+""; });
+  if(/[a-zA-Zء-ي]/.test(p)){ return null; }
+  var hadPlus = /^\s*\+/.test(p);
+  p = p.replace(/[\s\-\(\)]/g,"");
+  var digits = p.replace(/\D/g,"");
+  var eg = digits;
+  if(eg.indexOf("0020")===0){ eg = "0"+eg.substring(4); }
+  else if(eg.indexOf("20")===0 && eg.length===12){ eg = "0"+eg.substring(2); }
+  if(/^1[0125][0-9]{8}$/.test(eg)){ eg = "0"+eg; }
+  if(/^01[0125][0-9]{8}$/.test(eg) && !/^(\d)\1+$/.test(eg.substring(1))){ return "2"+eg; }
+  var intl = null;
+  if(hadPlus){ intl = digits; }
+  else if(p.indexOf("00")===0){ intl = digits.substring(2); }
+  if(intl && intl.length>=8 && intl.length<=15 && !/^(\d)\1+$/.test(intl)){ return intl; }
+  return null;
 }
+var PHONE_ERR = "رقم الموبايل مش صح. اكتب رقم مصري 11 رقم يبدأ بـ 010 أو 011 أو 012 أو 015، أو رقم دولي بـ + وكود الدولة.";
 function postLead(name, phone, intent, kind){
   if(LEADS_ENDPOINT){
     try {
       fetch(LEADS_ENDPOINT, {method:'POST', mode:'no-cors',
         headers:{'Content-Type':'application/x-www-form-urlencoded'},
         body:'name='+encodeURIComponent(name)+'&phone='+encodeURIComponent(phone)
-          +'&intent='+encodeURIComponent(intent)+'&source='+encodeURIComponent(kind)});
+          +'&intent='+encodeURIComponent(intent)+'&source='+encodeURIComponent(kind)+'&strict=1'});
     } catch(e){}
   }
 }
 function unlock(){
   var name = document.getElementById('leadName').value.trim();
-  var phone = normPhone(document.getElementById('leadPhone').value);
-  if(!name || phone.length < 10){ alert("اكتب اسمك ورقم موبايلك صح."); return; }
+  var rawPhone = document.getElementById('leadPhone').value;
+  var phone = normPhone(rawPhone);
+  if(!name){ alert("اكتب اسمك."); return; }
+  if(!phone){ alert(PHONE_ERR); return; }
   if(!chosenIntent){ alert("اختار: بتفكر تشتري إمتى؟"); return; }
-  postLead(name, phone, chosenIntent, 'حاسبة قبل الإمضا');
+  postLead(name, rawPhone.trim(), chosenIntent, 'حاسبة قبل الإمضا');
   document.getElementById('gate').style.display = 'none';
   document.getElementById('app').classList.remove('locked');
   window.scrollTo({top:0, behavior:'smooth'});
 }
 function sendGuide(){
   var name = document.getElementById('leadName').value.trim();
-  var phone = normPhone(document.getElementById('leadPhone').value);
-  postLead(name, phone, chosenIntent, 'طلب الجايد');
+  var rawPhone = document.getElementById('leadPhone').value;
+  var phone = normPhone(rawPhone);
+  if(!phone){ alert(PHONE_ERR); return; }
+  postLead(name, rawPhone.trim(), chosenIntent, 'طلب الجايد');
   document.getElementById('leadMsg').style.display = 'block';
 }
 var CB_N = 0;
@@ -328,10 +351,10 @@ function serverCalc(params, onOk){
 }
 
 var UNITS = [
-  {g:'avail', name:'شقة ١٢٠م² — التجمع الخامس', price:10000000, down:10, n:40, m:3, per:'كل ٣ شهور'},
-  {g:'avail', name:'تاون هاوس ٢٢٠م² — الشيخ زايد', price:18500000, down:15, n:32, m:3, per:'كل ٣ شهور'},
-  {g:'inv', name:'استوديو ٤٥م² — العاصمة الإدارية', price:3200000, down:20, n:48, m:1, per:'شهري'},
-  {g:'inv', name:'محل ٦٠م² — ٦ أكتوبر', price:6800000, down:25, n:36, m:3, per:'كل ٣ شهور'}
+  {g:'avail', name:'شقة ١٢٠م²، التجمع الخامس', price:10000000, down:10, n:40, m:3, per:'كل ٣ شهور'},
+  {g:'avail', name:'تاون هاوس ٢٢٠م²، الشيخ زايد', price:18500000, down:15, n:32, m:3, per:'كل ٣ شهور'},
+  {g:'inv', name:'استوديو ٤٥م²، العاصمة الإدارية', price:3200000, down:20, n:48, m:1, per:'شهري'},
+  {g:'inv', name:'محل ٦٠م²، ٦ أكتوبر', price:6800000, down:25, n:36, m:3, per:'كل ٣ شهور'}
 ];
 function renderUnits(){
   ['avail','inv'].forEach(function(g){
@@ -388,37 +411,50 @@ function calcInvest(){
   var n = parseInt(num('cN'));
   var m = parseFloat(document.getElementById('cPeriod').value);
   if(!C || C<=0 || !P || P<=0 || !(dpp>=0) || !n || n<=0){ alert("كمّل أرقامك الأول."); return; }
-  serverCalc({type:'invest', cash:C, price:P, down:dpp, n:n, m:m}, function(r){
+  serverCalc({type:'invest', model:'ladder', cash:C, price:P, down:dpp, n:n, m:m}, function(r){
     if(!r || r.error){
       if(r && r.error==='nodown'){ alert('الكاش اللي معاك مش بيغطي المقدم.'); }
       else { alert('راجع الأرقام.'); }
       return;
     }
+    document.getElementById('iCash').textContent = fmt(C);
     document.getElementById('iDown').textContent = fmt(r.down);
     document.getElementById('iInvest').textContent = fmt(r.invest);
     document.getElementById('iInst').textContent = fmt(r.inst);
+    document.getElementById('iAnnual').textContent = fmt(r.annualInst);
     document.getElementById('iTotal').textContent = fmt(r.totalInst);
     var v = document.getElementById('iVerdict');
-    if(r.covers && r.leftover < C){
-      countUp(document.getElementById('iBig'), C - r.leftover);
-      document.getElementById('iBigLbl').innerHTML = 'مش ببلاش 😄 دي تكلفتها الحقيقية من جيبك <b>بفلوس النهاردة</b> (جنيه)';
-      document.getElementById('iCover').textContent = 'أيوه — كل الأقساط متغطية من الاستثمار';
-      v.textContent = 'يعني بدل ما تدفع '+fmt(P)+' ج على الورق، طلعت من جيبك في الآخر '+fmt(C - r.leftover)+' ج بس — وفضلتلك '+fmt(r.leftover)+' ج بعد آخر قسط.';
-    } else if(r.covers){
-      countUp(document.getElementById('iBig'), r.leftover - C);
-      document.getElementById('iBigLbl').innerHTML = 'أحسن من ببلاش 🎉 اللي هيفضلك <b>فوق فلوسك كلها</b> (جنيه)';
-      document.getElementById('iCover').textContent = 'أيوه — كل الأقساط متغطية من الاستثمار';
-      v.textContent = 'الاستثمار دفع كل الأقساط، ورجعلك فلوسك الـ '+fmt(C)+' ج وزيادة '+fmt(r.leftover - C)+' ج في آخر الخطة.';
+    if(r.covers){
+      countUp(document.getElementById('iBig'), r.leftover);
+      document.getElementById('iBigLbl').innerHTML = 'عندك شقة، وكمان هتاخد عليها المبلغ ده <b>في جيبك</b> 🎉 (جنيه)';
+      document.getElementById('iCoverLine').textContent = 'الاستثمار بيغطي الأقساط لحد آخر لحظة، وكمان بتكسب فوقيها 💪';
+      if(r.leftover < C){
+        v.textContent = 'يعني بدل ما تدفع '+fmt(P)+' ج على الورق، طلعت من جيبك في الآخر '+fmt(C - r.leftover)+' ج بس، وفضلتلك '+fmt(r.leftover)+' ج بعد آخر قسط.';
+      } else {
+        v.textContent = 'الاستثمار دفع كل الأقساط، ورجعلك فلوسك الـ '+fmt(C)+' ج وزيادة '+fmt(r.leftover - C)+' ج في آخر الخطة.';
+      }
     } else {
-      countUp(document.getElementById('iBig'), r.failAt);
-      document.getElementById('iBigLbl').innerHTML = 'الفلوس بتخلص عند <b>القسط رقم ده</b>';
-      document.getElementById('iCover').textContent = 'لأ — الاستثمار مش بيغطي الخطة كلها';
-      v.textContent = 'من القسط رقم '+r.failAt+' هتحتاج تدفع من جيبك. جرّب تزوّد الكاش أو تختار خطة أقصر.';
+      countUp(document.getElementById('iBig'), r.failYear);
+      document.getElementById('iBigLbl').innerHTML = 'الفلوس بتخلص في <b>السنة دي</b>';
+      document.getElementById('iCoverLine').textContent = 'لأ، الاستثمار مش بيغطي الخطة كلها';
+      v.textContent = 'في السنة '+r.failYear+' هينقصك حوالي '+fmt(r.shortfall)+' ج، وإجمالي اللي هيتحسب من جيبك على باقي الخطة '+fmt(r.totalOOP)+' ج. جرّب تزوّد الكاش أو تختار خطة أقصر.';
     }
     var res = document.getElementById('cashResult');
     res.style.display = 'block';
     res.scrollIntoView({behavior:'smooth'});
+    postCalcInputs(C, P, dpp, n, m);
   });
+}
+function postCalcInputs(C, P, dpp, n, m){
+  if(!LEADS_ENDPOINT){ return; }
+  var rawPhone = (document.getElementById('leadPhone').value||"").trim();
+  if(!rawPhone){ return; }
+  try {
+    fetch(LEADS_ENDPOINT, {method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:'action=calcInputs&phone='+encodeURIComponent(rawPhone)
+        +'&cash='+C+'&price='+P+'&down='+dpp+'&n='+n+'&m='+m});
+  } catch(e){}
 }
 function fmt(x){ return Math.round(x).toLocaleString("en-US"); }
 function countUp(el, target){
