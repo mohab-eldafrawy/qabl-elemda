@@ -257,11 +257,7 @@
   <div class="card" id="unitsCard">
     <h2>وحدات تقدر تتفرج عليها 🏠</h2>
     <p class="sub">اختار أي وحدة واضغط «احسبها»، هتشوف قيمتها الحقيقية بفلوس النهاردة على طول.</p>
-    <div class="sample-note">دي وحدات تجريبية للتوضيح بس، قايمة الوحدات الحقيقية جاية قريب.</div>
-    <h3 style="color:var(--navy);margin:14px 0 0">وحدات متاحة</h3>
     <div id="unitsAvail"></div>
-    <h3 style="color:var(--navy);margin:18px 0 0">وحدات استثمارية</h3>
-    <div id="unitsInvest"></div>
   </div>
 
   </div>
@@ -373,34 +369,29 @@ function serverCalc(params, onOk){
   document.body.appendChild(s);
 }
 
-var UNITS = [
-  {g:'avail', name:'شقة ١٢٠م²، التجمع الخامس', price:10000000, down:10, n:40, m:3, per:'كل ٣ شهور'},
-  {g:'avail', name:'تاون هاوس ٢٢٠م²، الشيخ زايد', price:18500000, down:15, n:32, m:3, per:'كل ٣ شهور'},
-  {g:'inv', name:'استوديو ٤٥م²، العاصمة الإدارية', price:3200000, down:20, n:48, m:1, per:'شهري'},
-  {g:'inv', name:'محل ٦٠م²، ٦ أكتوبر', price:6800000, down:25, n:36, m:3, per:'كل ٣ شهور'}
-];
-function renderUnits(){
-  ['avail','inv'].forEach(function(g){
-    var host = document.getElementById(g==='avail' ? 'unitsAvail' : 'unitsInvest');
-    host.innerHTML = '';
-    UNITS.forEach(function(u, i){
-      if(u.g !== g) return;
-      var d = document.createElement('div');
-      d.className = 'unit';
-      d.innerHTML = '<h3>'+u.name+'</h3>'
-        + '<div class="chips">'
-        + '<span class="chip">السعر: '+fmt(u.price)+' ج</span>'
-        + '<span class="chip">مقدم '+u.down+'%</span>'
-        + '<span class="chip">'+u.n+' قسط '+u.per+'</span>'
-        + '</div>'
-        + '<button class="btn" data-ui="'+i+'">احسبها بفلوس النهاردة</button>'
-        + '<div class="unit-res" id="ures'+i+'"></div>';
-      host.appendChild(d);
-    });
+var UNITS = [{"name": "شقة ١٥٥م²، أليكس ويست", "loc": "٣ غرف | استلام خلال سنة", "area": 155, "price": 7442000, "over": 0, "paid": 0, "down": 52.41, "n": 20, "m": 3, "cash": 3900000, "inst": 177140, "remain": 3542000, "extra": "رسوم إضافية: صيانة 310,000 + مرافق 155,000 + تنازل 310,000 (إجمالي 775,000 ج)"}, {"name": "شقة ١٥٣م² صف أول النادي، أليكس ويست", "loc": "٣ غرف | دور خامس | استلام فوري", "area": 153, "price": 7420000, "over": 0, "paid": 0, "down": 92.99, "n": 15, "m": 3, "cash": 6900000, "inst": 35000, "remain": 520000, "extra": "المتبقي بعد الكاش 520,000 ج على أقساط ربع سنوية"}];
+function per(m){ return m===1?'شهري':(m===12?'سنوي':'كل '+m+' شهور'); }
+function render(){
+  var host = document.getElementById('unitsAvail');
+  UNITS.forEach(function(u, i){
+    var d = document.createElement('div');
+    d.className = 'unit';
+    var chips = '<span class="chip">السعر: '+fmt(u.price)+' ج</span>';
+    if(u.over>0){ chips += '<span class="chip">أوفر: '+fmt(u.over)+' ج</span>'; }
+    if(u.cash){ chips += '<span class="chip">الكاش المطلوب: '+fmt(u.cash)+' ج</span><span class="chip">المتبقي: '+fmt(u.remain)+' ج</span>'; }
+    else if(u.down>0){ chips += '<span class="chip">مقدم '+u.down+'%</span>'; }
+    if(u.inst){ chips += '<span class="chip">القسط: '+fmt(u.inst)+' ج '+per(u.m)+'</span>'; }
+    else { chips += '<span class="chip">'+u.n+' قسط '+per(u.m)+'</span>'; }
+    d.innerHTML = '<h3>'+u.name+' <span class="tag">'+u.area+' م²</span></h3>'
+      + '<div class="meta">'+u.loc+'<br>'+u.extra+'</div>'
+      + '<div class="chips">'+chips+'</div>'
+      + '<div class="btnrow"><button class="btn" data-ui="'+i+'">احسبها بفلوس النهاردة</button>'
+      + '<button class="btn btn-wa" data-wa="'+i+'">اسأل عنها واتساب</button></div>'
+      + '<div class="unit-res" id="ures'+i+'"></div>';
+    host.appendChild(d);
   });
-  document.querySelectorAll('#unitsCard .btn').forEach(function(b){
-    b.addEventListener('click', function(){ calcUnit(parseInt(b.getAttribute('data-ui')), b); });
-  });
+  document.querySelectorAll('[data-ui]').forEach(function(b){ b.addEventListener('click', function(){ calcUnit(parseInt(b.getAttribute('data-ui')), b); }); });
+  document.querySelectorAll('[data-wa]').forEach(function(b){ b.addEventListener('click', function(){ askWA(parseInt(b.getAttribute('data-wa'))); }); });
 }
 function calcUnit(i, btn){
   var u = UNITS[i];
@@ -409,12 +400,16 @@ function calcUnit(i, btn){
     btn.disabled = false; btn.textContent = 'احسبها بفلوس النهاردة';
     if(!r || r.error){ alert('راجع الأرقام.'); return; }
     var res = document.getElementById('ures'+i);
-    res.innerHTML = 'قيمتها <b>بفلوس النهاردة: '+fmt(r.pv)+' ج</b><br>'
-      + 'يعني خطة التقسيط دي بتوفر لك من تمنها حوالي <b>'+fmt(r.diff)+' ج</b> مقارنة بسعرها كاش النهاردة.';
+    res.innerHTML = 'قيمتها <b>بفلوس النهاردة: '+fmt(r.pv)+' ج</b><br>يعني خطة التقسيط دي بتوفر لك من تمنها حوالي <b>'+fmt(r.diff)+' ج</b> مقارنة بسعرها كاش النهاردة.';
     res.style.display = 'block';
   });
 }
-renderUnits();
+function askWA(i){
+  var u = UNITS[i];
+  var t = 'أهلاً، عايز أعرف تفاصيل أكتر عن: '+u.name+' ('+u.loc+') بسعر '+fmt(u.price)+' ج';
+  window.open('https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(t), '_blank');
+}
+render();
 function showCalc2(){
   document.getElementById('calc1Wrap').style.display = 'none';
   var w = document.getElementById('calc2Wrap');
