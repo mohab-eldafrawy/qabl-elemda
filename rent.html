@@ -265,21 +265,21 @@ function calc(){
   var rp5=total>0?r5/total*100:0;
   var yrsTxt=py+(py<3?' سنة':' سنين');
   var yl=['السنة الأولى','السنة التانية','السنة التالتة'];
-  var roi3='', roe3='';
+  var roi3='', roe3='', crent=0;
   for(var k=0;k<3;k++){
-    var rk=R*Math.pow(1+G,k), yk=H+k;
-    roi3+='<div><small>'+yl[k]+' ('+yk+')</small><b dir="ltr">'+(total>0?(rk/total*100).toFixed(1)+'%':'-')+'</b></div>';
+    var rk=R*Math.pow(1+G,k), yk=H+k; crent+=rk;
+    roi3+='<div><small>'+yl[k]+' ('+yk+')</small><b dir="ltr">'+(P>0?(rk/P*100).toFixed(1)+'%':'-')+'</b></div>';
     var eq=down, insk=0;
     L.forEach(function(r){ if(r.y<=yk) eq+=r.ins; if(r.y===yk) insk=r.ins; });
-    roe3+='<div><small>'+yl[k]+' ('+yk+')</small><b dir="ltr">'+(eq>0?((rk-insk)/eq*100).toFixed(1)+'%':'-')+'</b></div>';
+    roe3+='<div><small>'+yl[k]+' ('+yk+')</small><b dir="ltr">'+(eq>0?(crent/eq*100).toFixed(1)+'%':'-')+'</b></div>';
   }
   var h='<div class="four">'
    +'<div class="box"><span>السنة اللي هتبدأ تأجر فيها</span><b>'+H+'</b></div>'
    +'<div class="box"><span>اللي هتدفعه من جيبك</span><b>'+fmt(total)+' ج</b><em>'+(cash?'كاش مرة واحدة سنة '+S:py>0?'على '+yrsTxt+' ('+pf+(pl!==pf?' إلى '+pl:'')+')':'مش هتدفع من جيبك')+'</em></div>'
    +'<div class="box"><span>'+(cash?'مفيش أقساط: دفعت كاش مرة واحدة سنة':'السنة اللي مش هتدفع بعدها من جيبك (الإيجار بيغطي القسط)')+'</span><b>'+(first===null?'مفيش في المدة':first)+'</b></div>'
    +'<div class="box"><span>سنة التعادل (الإيجار'+(SH>0?' + جزء من زيادة سعر الوحدة':' المتجمّع')+' = اللي دفعته)</span><b>'+(be===null?'مفيش تعادل':be)+'</b></div>'
-   +'<div class="box wide y3"><span>العائد السنوي ROI (إيجار السنة ÷ اللي دفعته من جيبك)</span><div class="y3row">'+roi3+'</div></div>'
-   +(cash?'':'<div class="box wide y3"><span>العائد على فلوسك ROE (إيجار السنة ناقص قسطها ÷ المقدم + الأقساط المدفوعة لحد السنة دي)</span><div class="y3row">'+roe3+'</div></div>')
+   +'<div class="box wide y3"><span>العائد السنوي ROI (إيجار السنة ÷ سعر الوحدة كامل)</span><div class="y3row">'+roi3+'</div></div>'
+   +(cash?'':'<div class="box wide y3"><span>العائد على اللي دفعته ROE (إجمالي الإيجارات لحد السنة دي ÷ إجمالي اللي دفعته لحد السنة دي: المقدم + الأقساط)</span><div class="y3row">'+roe3+'</div></div>')
    +'<div class="box wide five"><span>بعد 5 سنين هتكون كسبت إيجارات</span><b>'+fmt(r5)+' ج</b><em>= '+rp5.toFixed(0)+'% من اللي دفعته، والوحدة هتبقى سعرها '+fmt(v5)+' ج</em><small>ده سيناريو متحفّظ جداً (الحالة الصعبة قوي)</small></div></div>';
   if(after>0) h+='<div class="sample-note">تنبيه: هتفضل تدفع من جيبك '+fmt(after)+' ج بعد الاستلام.</div>';
   document.getElementById('res').innerHTML=h;
