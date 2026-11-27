@@ -93,11 +93,9 @@
 
   .unit{border:2px dashed rgba(31,59,99,.4);border-radius:16px 18px 14px 20px;padding:12px 14px;margin-top:12px;background:rgba(255,255,255,.55)}
   .unit h3{margin:0 0 6px;font-size:1.02rem;color:var(--navy)}
-  .unit .chips{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
-  .unit .chip{background:var(--navy);color:#fff;border-radius:14px;padding:5px 8px;font-size:.76rem;text-align:center;line-height:1.5}
+  .unit .chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;border:2px solid var(--navy);border-radius:14px;padding:10px;background:transparent}
+  .unit .chip{background:transparent;color:var(--navy);font-weight:700;padding:2px 4px;font-size:.8rem;text-align:center;line-height:1.5}
   .unit .btn{padding:10px 14px;font-size:.95rem;margin-top:2px}
-  .unit .btn[data-ui]{background:var(--orange);box-shadow:0 5px 0 #b85a1d;color:#fff}
-  .unit .btn[data-ui]:active{box-shadow:0 1px 0 #b85a1d}
   .unit-res{display:none;margin-top:10px;padding:10px;border-radius:12px;background:#fff3e6;border:2px solid var(--orange);font-weight:700;color:var(--navy)}
   .unit-res b{color:var(--orange)}
   .sample-note{background:#fff8e1;border:2px solid #e0b93c;color:#6b5310;border-radius:12px;padding:8px 10px;font-size:.85rem;margin-top:10px}
@@ -390,12 +388,14 @@ function render(){
   UNITS.forEach(function(u, i){
     var d = document.createElement('div');
     d.className = 'unit';
-    var chips = '<span class="chip">السعر: '+fmt(u.price)+' ج</span>';
-    if(u.over>0){ chips += '<span class="chip">أوفر: '+fmt(u.over)+' ج</span>'; }
-    if(u.cash){ chips += '<span class="chip">الكاش المطلوب: '+fmt(u.cash)+' ج</span><span class="chip">المتبقي: '+fmt(u.remain)+' ج</span>'; }
+    var chips = '';
+    if(u.cash){ chips += '<span class="chip">الكاش المطلوب: '+fmt(u.cash)+' ج</span>'; }
     else if(u.down>0){ chips += '<span class="chip">مقدم '+u.down+'%</span>'; }
     if(u.inst){ chips += '<span class="chip">القسط: '+fmt(u.inst)+' ج '+per(u.m)+'</span>'; }
     else { chips += '<span class="chip">'+u.n+' قسط '+per(u.m)+'</span>'; }
+    if(u.cash){ chips += '<span class="chip">المتبقي: '+fmt(u.remain)+' ج</span>'; }
+    chips += '<span class="chip">الإجمالي: '+fmt(u.price)+' ج</span>';
+    if(u.over>0){ chips += '<span class="chip">أوفر: '+fmt(u.over)+' ج</span>'; }
     d.innerHTML = '<h3>'+u.name+' <span class="tag">'+u.area+' م²</span></h3>'
       + '<div class="meta">'+u.loc+'<br>'+u.extra+'</div>'
       + '<div class="chips">'+chips+'</div>'
