@@ -288,6 +288,8 @@ function calc(){
 }
 
 document.getElementById('go').addEventListener('click',calc);
+function hideOut_(){ document.getElementById('out').style.display='none'; window.__sum=null; }
+document.querySelectorAll('#app input,#app select').forEach(function(e){ e.addEventListener('input',hideOut_); e.addEventListener('change',hideOut_); });
 document.getElementById('mode').addEventListener('change',function(){
   var c=this.value==='cash';
   document.querySelectorAll('.instOnly').forEach(function(e){ e.style.display=c?'none':''; });
