@@ -112,7 +112,9 @@
   /* الكاراكتر */
   #mascot{position:fixed;bottom:8px;left:8px;width:74px;z-index:5;transform-origin:bottom center;animation:sway 2.6s ease-in-out infinite;pointer-events:none;filter:drop-shadow(2px 3px 0 rgba(31,59,99,.15))}
   @keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg) translateY(-3px)}}
-  .locked{display:none}
+  .blurred{filter:blur(9px);pointer-events:none;user-select:none;-webkit-user-select:none}
+  #gate{display:none}
+  #gate .lockhead{font-weight:800;font-size:1.05rem;line-height:1.7;margin-bottom:10px;text-align:center}
 
   .nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:2px 0 6px;position:sticky;top:0;z-index:5;background:var(--cream);padding:8px 0;border-bottom:2px dashed rgba(31,59,99,.25)}
   .nav a{text-decoration:none;color:var(--navy);font-weight:800;font-size:14px;padding:8px 13px;border:2px solid var(--navy);border-radius:999px;background:var(--cream2);transition:transform .15s}
@@ -146,6 +148,7 @@
 
   <!-- البوابة -->
   <div class="card" id="gate">
+    <div class="lockhead">🔒 باقي النتايج متحجوبة<br>اكتب بياناتك وهتشوفها كلها</div>
     <label style="margin-top:0">اسمك</label>
     <input type="text" id="leadName" name="name" autocomplete="name" autocapitalize="words" placeholder="اكتب اسمك">
     <label>رقم الموبايل</label>
@@ -154,12 +157,12 @@
     <div class="intent" data-v="🔥 بيشتري دلوقتي ومحتاج مساعدة"><span class="dot"></span>بشتري دلوقتي ومحتاج مساعدة<span class="fire">🔥</span></div>
     <div class="intent" data-v="بيفكر يشتري خلال ٦ شهور"><span class="dot"></span>بفكر أشتري في خلال ٦ شهور</div>
     <div class="intent" data-v="مش بيفكر يشتري أصلا"><span class="dot"></span>مش بفكر أشتري أصلا</div>
-    <button class="btn" onclick="unlock()">يلا نحسبها</button>
+    <button class="btn" onclick="unlock()">وريني باقي النتايج</button>
     <div class="tiny">بضغطك هنا بتسجّل اسمك ورقمك واختيارك، وممكن نتواصل معاك واتساب على رقمك.</div>
   </div>
 
   <!-- الحاسبة -->
-  <div id="app" class="locked">
+  <div id="app">
   <div id="calc1Wrap">
   <div class="card">
     <label>سعر الوحدة (جنيه)</label>
@@ -331,6 +334,19 @@ function postLead(name, phone, intent, kind){
     } catch(e){}
   }
 }
+var UNLOCKED=false, LOCKED_=[], PENDING_=[];
+function lockBlur_(els, parent, ref){
+  if(UNLOCKED) return;
+  var g=document.getElementById('gate');
+  els.forEach(function(e){ if(e){ e.classList.add('blurred'); LOCKED_.push(e); } });
+  parent.insertBefore(g, ref||null); g.style.display='block';
+}
+function finishUnlock_(){
+  UNLOCKED=true;
+  LOCKED_.forEach(function(e){ e.classList.remove('blurred'); }); LOCKED_=[];
+  var g=document.getElementById('gate'); g.style.display='none'; g.style.order='';
+  var p=PENDING_; PENDING_=[]; setTimeout(function(){ p.forEach(function(f){ try{f();}catch(e){} }); }, 2500);
+}
 function unlock(){
   var name = document.getElementById('leadName').value.trim();
   var rawPhone = document.getElementById('leadPhone').value;
@@ -340,9 +356,7 @@ function unlock(){
   if(!chosenIntent){ alert("اختار: بتفكر تشتري إمتى؟"); return; }
   try{localStorage.setItem('qe_lead_v1',JSON.stringify({name:name,phone:rawPhone.trim(),intent:chosenIntent}));}catch(e){}
   postLead(name, rawPhone.trim(), chosenIntent, 'حاسبة قبل الإمضا');
-  document.getElementById('gate').style.display = 'none';
-  document.getElementById('app').classList.remove('locked');
-  window.scrollTo({top:0, behavior:'smooth'});
+  finishUnlock_();
 }
 function sendGuide(){
   var name = document.getElementById('leadName').value.trim();
@@ -399,8 +413,9 @@ function calcUnit(i, btn){
     btn.disabled = false; btn.textContent = 'احسبها بفلوس النهاردة';
     if(!r || r.error){ alert('راجع الأرقام.'); return; }
     var res = document.getElementById('ures'+i);
-    res.innerHTML = 'قيمتها <b>بفلوس النهاردة: '+fmt(r.pv)+' ج</b><br>يعني خطة التقسيط دي بتوفر لك من تمنها حوالي <b>'+fmt(r.diff)+' ج</b> مقارنة بسعرها كاش النهاردة.';
+    res.innerHTML = 'قيمتها <b>بفلوس النهاردة: '+fmt(r.pv)+' ج</b><br><span class="lk">يعني خطة التقسيط دي بتوفر لك من تمنها حوالي <b>'+fmt(r.diff)+' ج</b> مقارنة بسعرها كاش النهاردة.</span>';
     res.style.display = 'block';
+    if(!UNLOCKED){ lockBlur_([res.querySelector('.lk')], res.parentNode, res.nextSibling); }
   });
 }
 function askWA(i){
@@ -458,6 +473,8 @@ function calcInvest(){
     }
     var res = document.getElementById('cashResult');
     res.style.display = 'block';
+    if(!UNLOCKED){ var big2=res.querySelector('.big'); res.insertBefore(big2,res.firstChild); lockBlur_([document.getElementById('iVerdict'),res.querySelector('table.bd'),document.getElementById('iCoverLine'),res.lastElementChild], res, big2.nextSibling);
+      PENDING_=[function(){ postCalcInputs(C,P,dpp,n,m); }]; }
     res.scrollIntoView({behavior:'smooth'});
     postCalcInputs(C, P, dpp, n, m);
   });
@@ -504,6 +521,7 @@ function calc(){
     alert("كمّل الخانات صح: سعر الوحدة، المقدم (أقل من 100%)، وعدد الأقساط، والقسط كل قد إيه.");
     return;
   }
+  var pvP_={type:'pv', price:P, down:d, n:n, m:m};
   serverCalc({type:'pv', price:P, down:d, n:n, m:m, name:(document.getElementById('leadName').value||'').trim(), phone:(document.getElementById('leadPhone').value||'').trim()}, function(r){
     if(!r || r.error){ alert('راجع الأرقام.'); return; }
     countUp(document.getElementById('pvVal'), r.pv);
@@ -512,6 +530,8 @@ function calc(){
     document.getElementById('rInstPV').textContent = fmt(r.instPV);
     var res = document.getElementById('result');
     res.style.display = 'block';
+    if(!UNLOCKED){ var big=res.querySelector('.big'); lockBlur_([res.querySelector('.bd'),res.querySelector('.tiny')], res, big.nextSibling);
+      PENDING_=[function(){ pvP_.name=(document.getElementById('leadName').value||'').trim(); pvP_.phone=(document.getElementById('leadPhone').value||'').trim(); serverCalc(pvP_, function(){}); }]; }
     res.scrollIntoView({behavior:'smooth'});
   });
 }
@@ -519,7 +539,7 @@ function calc(){
 (function(){try{var s=JSON.parse(localStorage.getItem('qe_lead_v1')||'null');
   if(s&&s.name&&s.phone&&s.intent){
     document.getElementById('leadName').value=s.name; document.getElementById('leadPhone').value=s.phone; chosenIntent=s.intent;
-    document.getElementById('gate').style.display='none'; document.getElementById('app').classList.remove('locked');
+    UNLOCKED=true;
   }}catch(e){}})();
 </script>
 </body>
