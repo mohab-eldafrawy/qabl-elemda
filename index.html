@@ -504,7 +504,7 @@ function calc(){
     alert("كمّل الخانات صح: سعر الوحدة، المقدم (أقل من 100%)، وعدد الأقساط، والقسط كل قد إيه.");
     return;
   }
-  serverCalc({type:'pv', price:P, down:d, n:n, m:m}, function(r){
+  serverCalc({type:'pv', price:P, down:d, n:n, m:m, name:(document.getElementById('leadName').value||'').trim(), phone:(document.getElementById('leadPhone').value||'').trim()}, function(r){
     if(!r || r.error){ alert('راجع الأرقام.'); return; }
     countUp(document.getElementById('pvVal'), r.pv);
     document.getElementById('rDown').textContent = fmt(r.down);
