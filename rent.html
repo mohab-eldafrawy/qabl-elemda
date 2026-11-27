@@ -279,7 +279,7 @@ function calc(){
    +'<div class="box"><span>'+(cash?'مفيش أقساط: دفعت كاش مرة واحدة سنة':'السنة اللي مش هتدفع بعدها من جيبك (الإيجار بيغطي القسط)')+'</span><b>'+(first===null?'مفيش في المدة':first)+'</b></div>'
    +'<div class="box"><span>سنة التعادل (الإيجار'+(SH>0?' + جزء من زيادة سعر الوحدة':' المتجمّع')+' = اللي دفعته)</span><b>'+(be===null?'مفيش تعادل':be)+'</b></div>'
    +'<div class="box wide y3"><span>العائد السنوي ROI (إجمالي الإيجارات لحد السنة دي ÷ سعر الوحدة كامل)</span><div class="y3row">'+roi3+'</div></div>'
-   +(cash?'':'<div class="box wide y3"><span>العائد على اللي دفعته ROE (إجمالي الإيجارات لحد السنة دي ÷ إجمالي اللي دفعته لحد السنة دي: المقدم + الأقساط)</span><div class="y3row">'+roe3+'</div></div>')
+   +('<div class="box wide y3"><span>العائد على اللي دفعته ROE (إجمالي الإيجارات لحد السنة دي ÷ إجمالي اللي دفعته لحد السنة دي: المقدم + الأقساط)</span><div class="y3row">'+roe3+'</div></div>')
    +'<div class="box wide five"><span>بعد 5 سنين هتكون كسبت إيجارات</span><b>'+fmt(r5)+' ج</b><em>= '+rp5.toFixed(0)+'% من اللي دفعته، والوحدة هتبقى سعرها '+fmt(v5)+' ج</em><small>ده سيناريو متحفّظ جداً (الحالة الصعبة قوي)</small></div></div>';
   if(after>0) h+='<div class="sample-note">تنبيه: هتفضل تدفع من جيبك '+fmt(after)+' ج بعد الاستلام.</div>';
   document.getElementById('res').innerHTML=h;
