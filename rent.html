@@ -164,6 +164,9 @@
   .box small{font-size:11.5px;color:#7c7462}
   .box.five{min-height:120px;border-color:var(--orange)}
   .box.wide{grid-column:1/3;min-height:90px}
+  .box.y3 b{font-size:22px}
+  .y3row{display:flex;justify-content:space-around;gap:6px}
+  .y3row>div{flex:1;display:flex;flex-direction:column;gap:2px}
   .box:nth-child(2n){border-color:var(--orange)}
   .box span{font-size:13px;color:#5c5545;line-height:1.6}
   .box b{font-family:'Lalezar',cursive;font-size:28px;color:var(--orange);line-height:1.3}
@@ -201,12 +204,12 @@
   <div id="app" class="locked"><div class="card">
     <div class="fgrid">
       <div style="grid-column:1/3"><label>طريقة الدفع</label><select id="mode"><option value="inst">تقسيط</option><option value="cash">كاش (دفعة واحدة)</option></select></div>
-      <div><label>سعر الوحدة (ج)</label><input id="price" type="number" inputmode="numeric" placeholder="مثال: 3000000"></div>
+      <div><label>سعر الوحدة (ج)</label><input id="price" class="num" type="text" inputmode="numeric" placeholder="مثال: 3,000,000"></div>
       <div class="instOnly"><label>المقدم (%)</label><input id="down" type="number" inputmode="decimal" placeholder="مثال: 10"></div>
       <div class="instOnly"><label>مدة الأقساط (سنين)</label><input id="yrs" type="number" inputmode="numeric" placeholder="مثال: 10"></div>
       <div><label id="startLbl">سنة بداية الأقساط</label><input id="start" type="number" inputmode="numeric" placeholder="مثال: 2026"></div>
       <div id="handWrap"><label>سنة الاستلام</label><input id="hand" type="number" inputmode="numeric" placeholder="مثال: 2030"></div>
-      <div><label id="rentLbl">إيجار السنة وقت الاستلام (ج)</label><input id="rent" type="number" inputmode="numeric" placeholder="مثال: 300000"></div>
+      <div><label id="rentLbl">إيجار السنة وقت الاستلام (ج)</label><input id="rent" class="num" type="text" inputmode="numeric" placeholder="مثال: 300,000"></div>
     </div>
     <button class="btn" id="go" style="margin-top:16px;width:100%">احسب</button>
     <div id="out" style="display:none">
@@ -227,7 +230,14 @@
 var RENT_GROWTH_PCT = 12;
 var APPRECIATION_PCT = 15;
 function fmt(x){ return Math.round(x).toLocaleString("en-US"); }
-function v(id){ return parseFloat(document.getElementById(id).value)||0; }
+function v(id){ return parseFloat(String(document.getElementById(id).value).replace(/,/g,''))||0; }
+document.querySelectorAll('input.num').forEach(function(el){
+  el.addEventListener('input', function(){
+    var t=el.value.replace(/[^0-9.]/g,''); var d=t.indexOf('.');
+    var ip=d<0?t:t.slice(0,d), fp=d<0?'':t.slice(d);
+    el.value=ip.replace(/\B(?=(\d{3})+(?!\d))/g,',')+fp;
+  });
+});
 function calc(){
   var P=v('price'),D=v('down'),N=Math.round(v('yrs')),S=Math.round(v('start')),H=Math.round(v('hand')),R=v('rent'),G=RENT_GROWTH_PCT/100,A=APPRECIATION_PCT/100;
   var cash=(document.getElementById('mode').value==='cash');
@@ -254,12 +264,22 @@ function calc(){
   var vH=P, v5=P*Math.pow(1+A,5), r5=0; for(var q=0;q<5;q++){ r5+=R*Math.pow(1+G,q+(H-H)); }
   var rp5=total>0?r5/total*100:0;
   var yrsTxt=py+(py<3?' سنة':' سنين');
+  var yl=['السنة الأولى','السنة التانية','السنة التالتة'];
+  var roi3='', roe3='';
+  for(var k=0;k<3;k++){
+    var rk=R*Math.pow(1+G,k), yk=H+k;
+    roi3+='<div><small>'+yl[k]+' ('+yk+')</small><b dir="ltr">'+(total>0?(rk/total*100).toFixed(1)+'%':'-')+'</b></div>';
+    var eq=down, insk=0;
+    L.forEach(function(r){ if(r.y<=yk) eq+=r.ins; if(r.y===yk) insk=r.ins; });
+    roe3+='<div><small>'+yl[k]+' ('+yk+')</small><b dir="ltr">'+(eq>0?((rk-insk)/eq*100).toFixed(1)+'%':'-')+'</b></div>';
+  }
   var h='<div class="four">'
    +'<div class="box"><span>السنة اللي هتبدأ تأجر فيها</span><b>'+H+'</b></div>'
    +'<div class="box"><span>اللي هتدفعه من جيبك</span><b>'+fmt(total)+' ج</b><em>'+(cash?'كاش مرة واحدة سنة '+S:py>0?'على '+yrsTxt+' ('+pf+(pl!==pf?' إلى '+pl:'')+')':'مش هتدفع من جيبك')+'</em></div>'
    +'<div class="box"><span>'+(cash?'مفيش أقساط: دفعت كاش مرة واحدة سنة':'السنة اللي مش هتدفع بعدها من جيبك (الإيجار بيغطي القسط)')+'</span><b>'+(first===null?'مفيش في المدة':first)+'</b></div>'
    +'<div class="box"><span>سنة التعادل (الإيجار'+(SH>0?' + جزء من زيادة سعر الوحدة':' المتجمّع')+' = اللي دفعته)</span><b>'+(be===null?'مفيش تعادل':be)+'</b></div>'
-   +'<div class="box wide"><span>العائد السنوي (إيجار سنة الاستلام ÷ اللي دفعته)</span><b>'+(total>0?(R/total*100).toFixed(1)+'%':'-')+'</b></div>'
+   +'<div class="box wide y3"><span>العائد السنوي ROI (إيجار السنة ÷ اللي دفعته من جيبك)</span><div class="y3row">'+roi3+'</div></div>'
+   +(cash?'':'<div class="box wide y3"><span>العائد على فلوسك ROE (إيجار السنة ناقص قسطها ÷ المقدم + الأقساط المدفوعة لحد السنة دي)</span><div class="y3row">'+roe3+'</div></div>')
    +'<div class="box wide five"><span>بعد 5 سنين هتكون كسبت إيجارات</span><b>'+fmt(r5)+' ج</b><em>= '+rp5.toFixed(0)+'% من اللي دفعته، والوحدة هتبقى سعرها '+fmt(v5)+' ج</em><small>ده سيناريو متحفّظ جداً (الحالة الصعبة قوي)</small></div></div>';
   if(after>0) h+='<div class="sample-note">تنبيه: هتفضل تدفع من جيبك '+fmt(after)+' ج بعد الاستلام.</div>';
   document.getElementById('res').innerHTML=h;
